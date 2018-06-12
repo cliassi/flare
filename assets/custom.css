@@ -1,0 +1,8 @@
+#side-menu{
+	position: fixed;
+	width: 250px;
+}
+
+body{
+	margin: 0px;
+}

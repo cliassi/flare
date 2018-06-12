@@ -1,0 +1,85 @@
+
+<?php
+if($id){
+	print "<table class='table table-responsive table-striped table-bordered table-detailed-view'>
+		<tr><th>".str("Name")."</th><td> $object->name</td></tr>
+		<tr><th>".str("Company")."</th><td> $object->company</td></tr>
+		<tr><th>".str("Address")."</th><td> $object->address</td></tr>
+		<tr><th>".str("Date")."</th><td> $object->date</td></tr>
+		<tr><th>".str("Publisher")."</th><td> $object->publisher</td></tr>
+		<tr><th>".str("Service")."</th><td> $object->service</td></tr>
+		<tr><th>".str("Layout")."</th><td> $object->layout</td></tr>
+		<tr><th>".str("Payment Method")."</th><td> $object->payment_method</td></tr>
+		<tr><th>".str("Title")."</th><td> $object->title</td></tr>
+		<tr><th>".str("Content")."</th><td> $object->content</td></tr>
+		<tr><th>".str("Entry By")."</th><td> $object->entry_by</td></tr>
+		<tr><th>".str("Entry Time")."</th><td> $object->entry_time</td></tr>
+		<tr><th>".str("Approved By")."</th><td> $object->approved_by</td></tr>
+		<tr><th>".str("Approved Time")."</th><td> $object->approved_time</td></tr>
+		<tr><th>".str("Status")."</th><td> $object->status</td></tr>
+  </table>";
+  back();
+} else{
+	//$page = is("page", 1, "", FALSE);
+	$page = is("page", 1);
+	$offset = 20;
+	     
+	    $filter = "";
+	    openFilterForm("get");
+	    print "<input type='hidden' name='page' value='$page' class='form-control-fluid' />";
+	    $dateFrom = isset($get->dateFrom)?$get->dateFrom:today();
+	    $dateTo = isset($get->dateTo)?$get->dateTo:today();
+	    joinFilter($filter, "`date` BETWEEN '$dateFrom' AND '$dateTo'");
+	    print str("Date")." <input type='date' name='dateFrom' value='$dateFrom' class='form-control-fluid' /> to <input type='date' name='dateTo' value='$dateTo' class='form-control-fluid' /> ";
+	    $publisher = isf("publisher", "publisher", $filter, $get, '', true);
+    	print str("Publisher")." ".sop2('publisher', $publisher, ['optional'=>true], 'publisher');					
+	    $service = isf("service", "service", $filter, $get, '', true);
+    	print str("Service")." ".sop2('service', $service, ['optional'=>true], 'service');					
+	    $layout = isf("layout", "layout", $filter, $get, '', true);
+    	print str("Layout")." ".sop2('layout', $layout, ['optional'=>true], 'layout');					
+	    $title = isf("title", "title", $filter, $get);
+	    print str("Title")." <input type='text' name='title' value='$title' class='form-control-fluid' /> ";
+	    $status = isf("status", "status", $filter, $get);
+	    print str("Status")." ".selectEnum("name='status' class='form-control-fluid' id='status'", 'ad_request', 'status',$status, array(), true, false, true)." ";
+	    closeFilterForm();
+	$userlist = userList();
+	
+	$nor = num_rows("a.*", "ad_request a", "$filter");
+	$nop = ceil($nor/$offset);
+
+	$start = ($page-1)*$offset;
+	$ad_requests = select("a.*", "ad_request a", "$filter", "LIMIT $start, $offset");
+  $publisherList = toA("publisher");
+    	
+  $serviceList = toA("service");
+    	
+  $layoutList = toA("layout");
+    	
+	print "<hr>";
+	print "<table align='center' class='table table-responsive table-striped'>
+	<thead><tr><th>#</th><th>".str("Name")."</th><th>".str("Company")."</th><th>".str("Address")."</th><th>".str("Date")."</th><th>".str("Publisher")."</th><th>".str("Service")."</th><th>".str("Layout")."</th><th>".str("Title")."</th><th>".str("Status")."</th><th colspan='2'><a href='add' class='btn btn-danger'><i class='fa fa-file-o'></i> New</a></th></tr></thead>
+	    <tbody>";
+
+	$i = $start + 1;
+	while($ad_request = mysqli_fetch_object($ad_requests)){
+		print "<tr><td><a href='view/$ad_request->id'>$i</a></td>
+			<td>$ad_request->name</td>
+			<td>$ad_request->company</td>
+			<td>".stripslashes($ad_request->address)."</td>
+			<td>$ad_request->date</td>
+			<td>{$publisherList[$ad_request->publisher]}</td>
+	    <td>{$serviceList[$ad_request->service]}</td>
+	    <td>{$layoutList[$ad_request->layout]}</td>
+	    <td>$ad_request->title</td>
+			<td>$ad_request->status</td>
+			<td>".($ad_request->status != 'Approved'?"<a href='approve/$ad_request->id' class='btn btn-success'><i class='fa fa-check'></i>Approve</a>":"")."</td>
+			<td>".options2("", $ad_request->id, array("edit", "remove","erase"))."</td></tr>";
+		$i++;
+	}
+	print "</tbody>
+	<tfoot>";
+	print paging(11, $nop, $nor, $page);
+	print "</tfoot>
+	</table>";
+}
+?>

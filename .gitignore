@@ -1,0 +1,5 @@
+framework
+*.zip
+*.sql
+*.7z
+config.php

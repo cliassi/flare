@@ -1,0 +1,12 @@
+<?php
+openForm();
+print "<table align='center'>
+	<tr><td colspan='5'><b>".str("Ad Request Details")."</b></td><tr>
+		<tr><td>".str("Name")."</td><td><input type='text' name='name' id='name' value='$object->name' class='form-control ' /></td><td>".space(5)."</td><td>".str("Company")."</td><td><input type='text' name='company' id='company' value='$object->company' class='form-control ' /></td></tr>
+		<tr><td>".str("Address")."</td><td><textarea name='address' id='address' class='form-control '>$object->address</textarea></td><td>".space(5)."</td><td>".str("Date")."</td><td>".dateSelector("date", $object->date)."</td></tr>
+		<tr><td>".str("Publisher")."</td><td>".selectOption("name='publisher' id='publisher' class='form-control selectpicker' data-live-search='true'", 'publisher', 'name', 'id',$object->publisher)."</td><td>".space(5)."</td><td>".str("Service")."</td><td>".selectOption("name='service' id='service' class='form-control selectpicker' data-live-search='true'", 'service', 'name', 'id',$object->service)."</td></tr>
+		<tr><td>".str("Layout")."</td><td>".selectOption("name='layout' id='layout' class='form-control selectpicker' data-live-search='true'", 'layout', 'name', 'id',$object->layout)."</td><td>".space(5)."</td><td>".str("Payment Method")."</td><td><input type='text' name='payment_method' id='payment_method' value='$object->payment_method' class='form-control ' /></td></tr>
+		<tr><td>".str("Title")."</td><td><input type='text' name='title' id='title' value='$object->title' class='form-control ' /></td><td>".space(5)."</td><td>".str("Content")."</td><td><textarea name='content' id='content' class='form-control '>$object->content</textarea></td></tr>
+		<tr><td>".str("Status")."</td><td>".selectEnum("name='status' id='status'  class='form-control'", 'ad_request', 'status', $object->status?$object->status:'Pending')."</td><td>".space(5)."</td>
+	</table>";
+closeForm();

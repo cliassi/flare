@@ -1,0 +1,74 @@
+
+<?php
+if($id){
+	print "<table class='table table-responsive table-striped table-bordered table-detailed-view'>
+		<tr><th>".str("Parent Agent")."</th><td> $object->parent_agent</td></tr>
+		<tr><th>".str("Name")."</th><td> $object->name</td></tr>
+		<tr><th>".str("Nid")."</th><td> $object->nid</td></tr>
+		<tr><th>".str("Blood Group")."</th><td> $object->blood_group</td></tr>
+		<tr><th>".str("Premanent Address")."</th><td> $object->premanent_address</td></tr>
+		<tr><th>".str("Present Address")."</th><td> $object->present_address</td></tr>
+		<tr><th>".str("Passport")."</th><td> $object->passport</td></tr>
+		<tr><th>".str("Agent Id")."</th><td> $object->agent_id</td></tr>
+		<tr><th>".str("Division")."</th><td> $object->division</td></tr>
+		<tr><th>".str("District")."</th><td> $object->district</td></tr>
+		<tr><th>".str("Upazila")."</th><td> $object->upazila</td></tr>
+		<tr><th>".str("Level")."</th><td> $object->level</td></tr>
+		<tr><th>".str("Active")."</th><td> $object->active</td></tr>
+  </table>";
+  back();
+} else{
+	//$page = is("page", 1, "", FALSE);
+	$page = is("page", 1);
+	$offset = 20;
+	     
+	    $filter = "";
+	    openFilterForm("get");
+	    print "<input type='hidden' name='page' value='$page' class='form-control-fluid' />";
+	    $parent_agent = isf("parent_agent", "parent_agent", $filter, $get, '', true);
+    	print str("Parent Agent")." ".sop2('parent_agent', $parent_agent, ['optional'=>true], 'agent');					
+	    $name = isf("name", "name", $filter, $get);
+	    print str("Name")." <input type='text' name='name' value='$name' class='form-control-fluid' /> ";
+	    $division = isf("division", "division", $filter, $get);
+	    print str("Division")." <input type='text' name='division' value='$division' class='form-control-fluid' /> ";
+	    $district = isf("district", "district", $filter, $get);
+	    print str("District")." <input type='text' name='district' value='$district' class='form-control-fluid' /> ";
+	    $upazila = isf("upazila", "upazila", $filter, $get);
+	    print str("Upazila")." <input type='text' name='upazila' value='$upazila' class='form-control-fluid' /> ";
+	    closeFilterForm();
+	
+	$nor = num_rows("a.*", "agent a", "$filter");
+	$nop = ceil($nor/$offset);
+
+	$start = ($page-1)*$offset;
+	$agents = select("a.*", "agent a", "$filter", "LIMIT $start, $offset");
+  $parent_agentList = toA("agent");
+    	
+	print "<hr>";
+	print "<table align='center' class='table table-responsive table-striped'>
+	<thead><tr><th>#</th><th>".str("Parent Agent")."</th><th>".str("Name")."</th><th>".str("Nid")."</th><th>".str("Present Address")."</th><th>".str("Agent Id")."</th><th>".str("Division")."</th><th>".str("District")."</th><th>".str("Upazila")."</th><th>".str("Level")."</th><th>".str("Active")."</th><th>".options2("", "", array("add"))."</th></tr></thead>
+	    <tbody>";
+
+	$i = $start + 1;
+	while($agent = mysqli_fetch_object($agents)){
+		print "<tr><td><a href='view/$agent->id'>$i</a></td>
+			<td>{$parent_agentList[$agent->parent_agent]}</td>
+	    <td>$agent->name</td>
+			<td>$agent->nid</td>
+			<td>".stripslashes($agent->present_address)."</td>
+			<td>$agent->agent_id</td>
+			<td>$agent->division</td>
+			<td>$agent->district</td>
+			<td>$agent->upazila</td>
+			<td>$agent->level</td>
+			<td>".($agent->active?"Yes":"No")."</td>
+			<td>".options2("", $agent->id, array("edit", "remove","erase"))."</td></tr>";
+		$i++;
+	}
+	print "</tbody>
+	<tfoot>";
+	print paging(12, $nop, $nor, $page);
+	print "</tfoot>
+	</table>";
+}
+?>

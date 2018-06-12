@@ -1,0 +1,13 @@
+<?php 
+$fields = ['name','company','address','date','publisher','service','layout','payment_method','title','content','approved_by','approved_time','status'];
+
+foreach ($fields as $field) {
+	if(isset($post->$field) && nn($post->$field)) {
+		$object->$field = $post->$field;
+	}
+}
+
+if($function=="add") $object->entry_by = uid();
+if($function=="add") $object->entry_time = now();
+R::store($object); 
+?>

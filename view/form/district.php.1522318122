@@ -1,0 +1,7 @@
+<?php
+openForm();
+print "<table align='center'>
+	<tr><td colspan='5'><b>".str("District Details")."</b></td><tr>
+		<tr><td>".str("Name")."</td><td><input type='text' name='name' id='name' value='$object->name' class='form-control required' /></td><td>".space(5)."</td>
+	</table>";
+closeForm();
